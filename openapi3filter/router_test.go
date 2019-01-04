@@ -10,7 +10,7 @@ import (
 )
 
 func TestRouter(t *testing.T) {
-	// Build swagger
+	// Build Swagger
 	helloCONNECT := &openapi3.Operation{}
 	helloDELETE := &openapi3.Operation{}
 	helloGET := &openapi3.Operation{}

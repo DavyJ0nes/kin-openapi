@@ -30,7 +30,7 @@ type Routers []*Router
 func (routers Routers) FindRoute(method string, url *url.URL) (*Router, *Route, map[string]string, error) {
 	for _, router := range routers {
 		// Skip routers that have DO NOT have servers
-		if len(router.swagger.Servers) == 0 {
+		if len(router.Swagger.Servers) == 0 {
 			continue
 		}
 		route, pathParams, err := router.FindRoute(method, url)
@@ -40,7 +40,7 @@ func (routers Routers) FindRoute(method string, url *url.URL) (*Router, *Route, 
 	}
 	for _, router := range routers {
 		// Skip routers that DO have servers
-		if len(router.swagger.Servers) > 0 {
+		if len(router.Swagger.Servers) > 0 {
 			continue
 		}
 		route, pathParams, err := router.FindRoute(method, url)
@@ -55,7 +55,7 @@ func (routers Routers) FindRoute(method string, url *url.URL) (*Router, *Route, 
 
 // Router maps a HTTP request to an OpenAPI operation.
 type Router struct {
-	swagger  *openapi3.Swagger
+	Swagger  *openapi3.Swagger
 	pathNode *pathpattern.Node
 }
 
@@ -99,7 +99,7 @@ func (router *Router) AddSwagger(swagger *openapi3.Swagger) error {
 	if err := swagger.Validate(context.TODO()); err != nil {
 		return fmt.Errorf("Validating Swagger failed: %v", err)
 	}
-	router.swagger = swagger
+	router.Swagger = swagger
 	root := router.node()
 	for path, pathItem := range swagger.Paths {
 		for method, operation := range pathItem.Operations() {
@@ -142,7 +142,7 @@ func (router *Router) node() *pathpattern.Node {
 }
 
 func (router *Router) FindRoute(method string, url *url.URL) (*Route, map[string]string, error) {
-	swagger := router.swagger
+	swagger := router.Swagger
 
 	// Get server
 	servers := swagger.Servers
